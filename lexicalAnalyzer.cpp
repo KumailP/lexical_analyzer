@@ -19,7 +19,7 @@ class Lexer
 
 int main()
 {
-    string inputFileName = "test.txt";
+    string inputFileName = "text.txt";
     Lexer lexer(inputFileName);
     return 0;
 }
