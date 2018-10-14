@@ -35,31 +35,34 @@ class Token
 class Lexer
 {
   public:
-    ifstream s;
-    vector<Token> tokens;
+    ifstream s; // inputFile
+    vector<Token> tokens; // list of tokens
 
+    // constructor. opens input file from given file name.
     Lexer(string _s)
     {
         s.open(_s);
     }
 
+    // generates tokens from given file
     void generateTokens()
     {
-        while (s.peek() != EOF)
+        while (s.peek() != EOF) // until file reaches it's end
         {
-            tokens.push_back(nextToken());
+            tokens.push_back(nextToken()); // get token and add to token list
         }
         cout << "TOKENS: " << endl;
         printTokens();
     }
 
+    // gets next token from file
     Token nextToken()
     {
-        if (idChar(s.peek()))
+        if (idChar(s.peek())) // if next input from file is char
         {
             return readId();
         }
-        return Token(getNewTID(), "temp");
+        return Token(getNewTID(), "temp"); // temp
     }
 
     Token readId()
@@ -69,21 +72,23 @@ class Lexer
         {
             char c;
             s.get(c);
-            if (!idChar(c))
+            if (!idChar(c)) // get new char from file, if it is char then append to current token
             {
-                return Token(getNewTID(), id);
+                return Token(getNewTID(), id); // generate new token if keyword has finished (i.e. next input isn't char)
             }
-            id += c;
+            id += c; // append char to current token
         }
     }
 
+    // return true if argument is alphabet, digit or _
     bool idChar(char val)
     {
-        if (isalpha(val) || isdigit(val) || val == 'c')
+        if (isalpha(val) || isdigit(val) || val == '_')
             return true;
         return false;
     }
 
+    // print token list
     bool printTokens()
     {
         for (unsigned int i = 0; i < tokens.size(); i++)
