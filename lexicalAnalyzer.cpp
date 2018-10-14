@@ -41,7 +41,7 @@ class Lexer
     // constructor. opens input file from given file name.
     Lexer(string _s)
     {
-        s.open(_s);
+        s.open(_s.c_str());
     }
 
     // generates tokens from given file
