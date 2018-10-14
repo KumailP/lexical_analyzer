@@ -9,4 +9,4 @@ run: scanner
 	./scanner
 
 clean:
-	rm scanner.exe
+	rm -f scanner.exe
