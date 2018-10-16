@@ -1,22 +1,38 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <vector>
 
 using namespace std;
 
-static int tokenID = 0;
+static int ID_TID = 0;
+static int NUM_TID = 0;
+static int STR_TID = 0;
 
-int getNewTID()
+string getTID(string type)
 {
-    int tkn = tokenID;
-    tokenID++;
-    return tkn;
+    if (type == "id")
+    {
+        ID_TID++;
+        return "ID(" + to_string(ID_TID) + ")";
+    }
+    if (type == "num")
+    {
+        NUM_TID++;
+        return "NUM(" + to_string(NUM_TID) + ")";
+    }
+    if (type == "str")
+    {
+        STR_TID++;
+        return "STR(" + to_string(STR_TID) + ")";
+    }
+    return "err";
 }
 
 class Token
 {
   public:
-    int TID;
+    string TID;
     string val;
 
     Token()
@@ -25,7 +41,7 @@ class Token
         this->val = -1;
     }
 
-    Token(int id, string val)
+    Token(string id, string val)
     {
         this->TID = id;
         this->val = val;
@@ -49,7 +65,9 @@ class Lexer
     {
         while (s.peek() != EOF) // until file reaches it's end
         {
-            tokens.push_back(nextToken()); // get token and add to token list
+            Token next = nextToken();
+            // cout << "Got token: " << next.val << endl;
+            tokens.push_back(next); // get token and add to token list
         }
         cout << "TOKENS: " << endl;
         printTokens();
@@ -58,11 +76,65 @@ class Lexer
     // gets next token from file
     Token nextToken()
     {
-        if (idChar(s.peek())) // if next input from file is char
+        if (isalpha(s.peek()) || s.peek() == '_') // if next input from file is char
         {
             return readId();
         }
-        return Token(getNewTID(), "temp"); // temp
+        if (isdigit(s.peek()))
+        {
+            return readNumber();
+        }
+        if ((char)s.peek() == '"')
+        {
+            return readString();
+        }
+        return Token("error", "error"); // temp
+    }
+
+    Token readString()
+    {
+        string str = "";
+        s.get();
+        while (true)
+        {
+            if (s.peek() != EOF)
+            {
+                char c;
+                s.get(c);
+                if (c == '"')
+                {
+                    s.get();
+                    return Token(getTID("str"), str);
+                }
+                str += c;
+            }
+            else
+            {
+                return Token(getTID("str"), str);
+            }
+        }
+    }
+
+    Token readNumber()
+    {
+        string num = "";
+        while (true)
+        {
+            if (s.peek() != EOF)
+            {
+                char c;
+                s.get(c);
+                if (!isdigit(c))
+                {
+                    return Token(getTID("num"), num);
+                }
+                num += c;
+            }
+            else
+            {
+                return Token(getTID("num"), num);
+            }
+        }
     }
 
     Token readId()
@@ -76,13 +148,13 @@ class Lexer
                 s.get(c);
                 if (!idChar(c)) // get new char from file, if it is char then append to current token
                 {
-                    return Token(getNewTID(), id); // generate new token if keyword has finished (i.e. next input isn't char)
+                    return Token(getTID("id"), id); // generate new token if keyword has finished (i.e. next input isn't char)
                 }
                 id += c; // append char to current token
             }
             else
             {
-                return Token(getNewTID(), id);
+                return Token(getTID("id"), id);
             }
         }
     }
