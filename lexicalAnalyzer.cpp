@@ -65,9 +65,15 @@ class Lexer
     {
         while (s.peek() != EOF) // until file reaches it's end
         {
-            Token next = nextToken();
-            // cout << "Got token: " << next.val << endl;
-            tokens.push_back(next); // get token and add to token list
+            char next = s.peek();
+            if (next == 13 || next == 10 || next == 32) // ignore CR, 
+            {
+                s.get();
+            }
+            else
+            {
+                tokens.push_back(nextToken()); // get token and add to token list
+            }
         }
         cout << "TOKENS: " << endl;
         printTokens();
@@ -88,6 +94,7 @@ class Lexer
         {
             return readString();
         }
+        cout << "next: " << s.peek() << endl;
         return Token("error", "error"); // temp
     }
 
