@@ -35,7 +35,7 @@ class Token
 class Lexer
 {
   public:
-    ifstream s; // inputFile
+    ifstream s;           // inputFile
     vector<Token> tokens; // list of tokens
 
     // constructor. opens input file from given file name.
@@ -70,13 +70,20 @@ class Lexer
         string id = "";
         while (true)
         {
-            char c;
-            s.get(c);
-            if (!idChar(c)) // get new char from file, if it is char then append to current token
+            if (s.peek() != EOF)
             {
-                return Token(getNewTID(), id); // generate new token if keyword has finished (i.e. next input isn't char)
+                char c;
+                s.get(c);
+                if (!idChar(c)) // get new char from file, if it is char then append to current token
+                {
+                    return Token(getNewTID(), id); // generate new token if keyword has finished (i.e. next input isn't char)
+                }
+                id += c; // append char to current token
             }
-            id += c; // append char to current token
+            else
+            {
+                return Token(getNewTID(), id);
+            }
         }
     }
 
