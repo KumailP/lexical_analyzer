@@ -1,0 +1,4 @@
+<ID(1),thisIsAnID>
+<NUM(1),23>
+<STR(1),ThisIsAString>
+<STR(2),This Is Another String!>

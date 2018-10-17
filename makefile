@@ -1,7 +1,7 @@
 all: new
 
 scanner: 
-	g++ -Wall -g -o scanner lexicalAnalyzer.cpp
+	g++ -std=c++11 -Wall -g -o scanner lexicalAnalyzer.cpp
 
 new: clean scanner run
 

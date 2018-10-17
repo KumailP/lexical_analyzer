@@ -52,6 +52,7 @@ class Lexer
 {
   public:
     ifstream s;           // inputFile
+    ofstream outputFile;  //outputFile
     vector<Token> tokens; // list of tokens
 
     // constructor. opens input file from given file name.
@@ -183,13 +184,23 @@ class Lexer
         }
         return true;
     }
+
+    void printTokensInFile(string outFile){
+        outputFile.open(outFile.c_str()); 
+        for (unsigned int i = 0; i < tokens.size(); i++)
+        {
+            outputFile << "<" << tokens[i].TID << "," << tokens[i].val << ">" << endl;
+        }       
+    }
 };
 
 int main()
 {
     string inputFileName = "text.txt";
+    string outputFileName = "outputFile.txt";
     Lexer lexer(inputFileName);
 
     lexer.generateTokens();
+    lexer.printTokensInFile(outputFileName);
     return 0;
 }
