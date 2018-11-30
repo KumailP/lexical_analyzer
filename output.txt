@@ -1,0 +1,16 @@
+<ID(1),for>
+<SYMB(1),(>
+<ID(2),int>
+<ID(3),i>
+<SYMB(2),=>
+<NUM(1),0>
+<ID(4),i>
+<SYMB(3),<>
+<NUM(2),3>
+<ID(5),i>
+<SYMB(4),+>
+<SYMB(5),+>
+<SYMB(6),)>
+<SYMB(7),{>
+<ID(6),asdf>
+<SYMB(8),}>

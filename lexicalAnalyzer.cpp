@@ -8,6 +8,7 @@ using namespace std;
 static int ID_TID = 0;
 static int NUM_TID = 0;
 static int STR_TID = 0;
+static int SYMB_TID = 0;
 
 string getTID(string type)
 {
@@ -26,6 +27,11 @@ string getTID(string type)
         STR_TID++;
         return "STR(" + to_string(STR_TID) + ")";
     }
+    if (type == "symb")
+    {
+        SYMB_TID++;
+        return "SYMB(" + to_string(SYMB_TID) + ")";
+    }
     return "err";
 }
 
@@ -43,8 +49,8 @@ class Token
 
     Token(string id, string val)
     {
-        this->TID = id;
         this->val = val;
+        this->TID = id;
     }
 };
 
@@ -62,12 +68,12 @@ class Lexer
     }
 
     // generates tokens from given file
-    void generateTokens()
+    vector<Token> generateTokens()
     {
         while (s.peek() != EOF) // until file reaches it's end
         {
             char next = s.peek();
-            if (next == 13 || next == 10 || next == 32) // ignore CR, 
+            if (next == 13 || next == 10 || next == 32) // ignore CR,
             {
                 s.get();
             }
@@ -76,13 +82,16 @@ class Lexer
                 tokens.push_back(nextToken()); // get token and add to token list
             }
         }
-        cout << "TOKENS: " << endl;
-        printTokens();
+        return tokens;
     }
 
     // gets next token from file
     Token nextToken()
     {
+        if ((char)s.peek() == '<' || (char)s.peek() == '+' || (char)s.peek() == '-' || (char)s.peek() == '*' || (char)s.peek() == '/' || (char)s.peek() == '(' || (char)s.peek() == ')' || (char)s.peek() == '{' || (char)s.peek() == '}' || (char)s.peek() == '<' || (char)s.peek() == '>' || (char)s.peek() == '=')
+        {
+            return readSymbol();
+        }
         if (isalpha(s.peek()) || s.peek() == '_') // if next input from file is char
         {
             return readId();
@@ -123,6 +132,16 @@ class Lexer
         }
     }
 
+    Token
+    readSymbol()
+    {
+        string num = "";
+        char c;
+        s.get(c);
+        num += c;
+        return Token(getTID("symb"), num);
+    }
+
     Token readNumber()
     {
         string num = "";
@@ -153,11 +172,13 @@ class Lexer
             if (s.peek() != EOF)
             {
                 char c;
-                s.get(c);
-                if (!idChar(c)) // get new char from file, if it is char then append to current token
+                if (!idChar((char)s.peek())) // get new char from file, if it is char then append to current token
                 {
+                    cout << "ID: " << c << endl;
                     return Token(getTID("id"), id); // generate new token if keyword has finished (i.e. next input isn't char)
                 }
+                s.get(c);
+
                 id += c; // append char to current token
             }
             else
@@ -185,22 +206,33 @@ class Lexer
         return true;
     }
 
-    void printTokensInFile(string outFile){
-        outputFile.open(outFile.c_str()); 
+    void printTokensInFile(string outFile)
+    {
+        outputFile.open(outFile.c_str());
         for (unsigned int i = 0; i < tokens.size(); i++)
         {
             outputFile << "<" << tokens[i].TID << "," << tokens[i].val << ">" << endl;
-        }       
+        }
+        cout << "File saved to current directory." << endl;
     }
 };
 
 int main()
 {
     string inputFileName = "text.txt";
-    string outputFileName = "outputFile.txt";
+    // string outputFileName = "outputFile.txt";
     Lexer lexer(inputFileName);
 
-    lexer.generateTokens();
+    vector<Token> tokens;
+    tokens = lexer.generateTokens();
+
+    // cout << "TOKENS: " << endl;
+    // lexer.printTokens();
+
+    string outputFileName;
+    // cout << "Enter output file name: ";
+    // cin >> outputFileName;
+    outputFileName = "output.txt";
     lexer.printTokensInFile(outputFileName);
     return 0;
 }
